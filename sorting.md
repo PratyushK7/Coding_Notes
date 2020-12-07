@@ -93,7 +93,7 @@ stable_partition(vec.begin(), vec.end());
 ```
 > **Counting Sort:** Unstable, O\(N\) : O\(A\[i\]\)
 > **Heap Sort:** Unstable, Ω\(NlogN\) - θ\(NlogN\) - O\(NlogN\) : O\(1\)  
-> **Applications of HeapSort**
+> Applications of HeapSort:
 >1. Sort a nearly sorted (or K sorted) array 
 >2. k largest(or smallest) elements in an array 
 
