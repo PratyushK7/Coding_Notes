@@ -10,21 +10,18 @@
 
 **Insertion sort** is **faster** for **small** n because Quick **Sort** has extra overhead from the recursive function calls. Due to recursion constant factor is higher. **Insertion sort** requires less memory then quick sort \(stack memory\).
 
-```java
-static void insertionSort(int[] arr) {
-        int n = arr.length;
-        for (int i = 1; i < n; i++) {
-            // System.out.println(Arrays.toString(arr));
-            int key = arr[i];
-            int j = i - 1;
-            while (j >= 0 && arr[j] > key) {
-                arr[j + 1] = arr[j];
-                j--;
-            }
-            arr[j + 1] = key;
-        }
+```cpp
+void insertionSort(vector<int> &arr, int n)
+{
+    for (int i = 1; i < n; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key)
+            arr[j + 1] = arr[j], j--;
+        arr[j + 1] = key;
+    }
 }
-
 
 // In-place merge sort makes time complexity O(N²)
 void inplaceMerge(vector<int> &arr, int l, int m, int r)
