@@ -1,78 +1,104 @@
 # Sorting
 
+## Sorting
+
 > **Selection Sort:** Unstable \(Can be turned stable\), Ω\(N²\) - θ\(N²\) - O\(N²\) : O\(1\)  
 > **Bubble Sort:** Stable**,** Ω\(N\) - θ\(N²\) - O\(N²\) : O\(1\)  
 > **Insertion Sort:** Stable, Ω\(N\) - θ\(N²\) - O\(N²\) : O\(1\)  
 > **Merge Sort:** Stable, Ω\(NlogN\) - θ\(NlogN\) - O\(NlogN\) : O\(N\)  
 > **Quick Sort:** Unstable \(Can be turned stable\), Ω\(NlogN\) - θ\(NlogN\) - O\(N²\) : O\(1\)
 
-> **Insertion sort** is **faster** for **small** n because Quick **Sort** has extra overhead from the recursive function calls. Due to recursion constant factor is higher. **Insertion sort** requires less memory then quick sort \(stack memory\).
+**Insertion sort** is **faster** for **small** n because Quick **Sort** has extra overhead from the recursive function calls. Due to recursion constant factor is higher. **Insertion sort** requires less memory then quick sort \(stack memory\).
 
-```java
-// insertion sort
-    static void insertionSort(int[] arr) {
-        int n = arr.length;
-        for (int i = 1; i < n; i++) {
-            // System.out.println(Arrays.toString(arr));
-            int key = arr[i];
-            int j = i - 1;
-            while (j >= 0 && arr[j] > key) {
-                arr[j + 1] = arr[j];
-                j--;
-            }
-            arr[j + 1] = key;
+```cpp
+void insertionSort(vector<int> &arr, int n)
+{
+    for (int i = 1; i < n; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key)
+            arr[j + 1] = arr[j], j--;
+        arr[j + 1] = key;
+    }
+}
+
+// In-place merge sort makes time complexity O(N²)
+void inplaceMerge(vector<int> &arr, int l, int m, int r)
+{
+    for (int i = r; i > m; --i)
+    {
+        if (arr[m] > arr[i])
+        {
+            swap(arr[m], arr[i]);
+            int tmp = arr[m];
+            int j = m-1;
+            while (j >= 0 && tmp < arr[j])
+                arr[j+1] = arr[j], j--;
+            arr[j+1] = tmp;
         }
     }
-
-    // merge sort
-    static void mergeSort(int[] arr, int l, int r) {
-        if (l < r) {
-            int m = (l + r) / 2;
-            mergeSort(arr, l, m);
-            mergeSort(arr, m + 1, r);
-            merge(arr, l, m, r);
-        }
+}
+void merge(vector<int> &arr, int l, int m, int r)
+{
+    vector<int> temp = arr;
+    int i = l, j = m + 1, k = l;
+    while (i <= m && j <= r)
+    {
+        if (temp[i] > temp[j])
+            arr[k++] = temp[j++];
+        else
+            arr[k++] = temp[i++];
     }
-
-    static void merge(int[] arr, int l, int m, int r) {
-        int[] res = new int[arr.length];
-        int n1 = m - l + 1, n2 = r - m;
-
-        int[] L = new int[n1];
-        for (int i = 0; i < n1; i++) {
-            L[i] = arr[l + i];
-        }
-        int[] R = new int[n2];
-        for (int i = 0; i < n2; i++) {
-            R[i] = arr[m + 1 + i];
-        }
-        int i = 0, j = 0, k = l;
-
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k++] = L[i++];
-            } else {
-                arr[k++] = R[j++];
-            }
-        }
-
-        while (i < n1) {
-            arr[k++] = L[i++];
-        }
-
-        while (j < n2) {
-            arr[k++] = R[j++];
-        }
-
+    while (i <= m)
+        arr[k++] = temp[i++];
+    while (j <= r)
+        arr[k++] = temp[j++];
+}
+void mergeSort(vector<int> &arr, int l, int r)
+{
+    if (l < r)
+    {
+        m = (l + r) / 2;
+        mergeSort(arr, 0, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, 0, m, r);
     }
-
+}
+/* Randomized quick sort (picking random pivot index instead of r) gives
+NlogN in worst aswell */
+// Quick sort is worst when - already sorted (asc or desc) or all elems are same
+int partition(vector<int> &arr, int l, int r)
+{
+    int pivot = arr[r];
+    int j = l;
+    for (int i = l; i < r; ++i)
+    {
+        if (arr[i] < pivot)
+            swap(arr[j++], arr[i]);
+    }
+    swap(arr[r], arr[j]);
+    return j;
+}
+void sort(vector<int> &arr, int l, int r)
+{
+    if (l < r)
+    {
+        int partitionIndex = partition(arr, l, r);
+        sort(arr, l, partitionIndex - 1);
+        sort(arr, partitionIndex + 1, r);
+    }
+}
+stable_partition(vec.begin(), vec.end());
 ```
+> **Counting Sort:** Unstable, O\(N\) : O\(A\[i\]\)
 
-> **Time Complexity:** Time complexity of heapify is O(Logn). Time complexity of createAndBuildHeap() is O(n) and overall time complexity of Heap Sort is O(nLogn).
->
-> **Applications of HeapSort** 
-> **1.** [Sort a nearly sorted (or K sorted) array](https://www.geeksforgeeks.org/nearly-sorted-algorithm/) 
-> **2.** [k largest(or smallest) elements in an array](https://www.geeksforgeeks.org/k-largestor-smallest-elements-in-an-array/)
+
+> **Heap Sort:** Unstable, Ω\(NlogN\) - θ\(NlogN\) - O\(NlogN\) : O\(1\)  
+>Applications of HeapSort:
+>1. Sort a nearly sorted (or K sorted) array 
+>2. k largest(or smallest) elements in an array 
+
 
 ```cpp
 /* Heap is in array form, for all leaves i.e. from i = 0 to n/2
@@ -110,69 +136,61 @@ void heapSort(int arr[], int n)
 }
 ```
 
-## Radix Sort
+### Radix Sort
 
 [https://www.youtube.com/watch?v=JMlYkE8hGJM](https://www.youtube.com/watch?v=JMlYkE8hGJM)
 
-https://www.youtube.com/watch?v=Il45xNUHGp0
-
 O\(d \* \(n + b\)\) - b is base in number it is 10, for strings it's 26
 
-* Most optimal, only drawback is due to not being comparison based sorting in nature only limited to int, float or strings.
+* The lower bound for Comparison based sorting algorithm (Merge Sort, Heap Sort, Quick-Sort .. etc) is Ω(nLogn), i.e., they cannot do better than nLogn. 
 
-* > The [lower bound for Comparison based sorting algorithm](https://www.geeksforgeeks.org/lower-bound-on-comparison-based-sorting-algorithms/) (Merge Sort, Heap Sort, Quick-Sort .. etc) is Ω(nLogn), i.e., they cannot do better than nLogn. 
-  >
-  > [Counting sort](https://www.geeksforgeeks.org/counting-sort/) is a linear time sorting algorithm that sort in O(n+k) time when elements are in the range from 1 to k.
-  >
-  > ***What if the elements are in*** **the** ***range from 1 to n2?*** 
-  > We can’t use counting sort because counting sort will take O(n2) which is worse than comparison-based sorting algorithms. Can we sort such an array in linear time? 
-  >
-  > [Radix Sort](http://en.wikipedia.org/wiki/Radix_sort) is the answer. The idea of Radix Sort is to do digit by digit sort starting from least significant digit to most significant digit. Radix sort uses counting sort as a subroutine to sort.
+Counting sort is a linear time sorting algorithm that sort in O(n+k) time when elements are in the range from 1 to k.
 
-```java
-    // radix sort
-    static void radixSort(int[] arr, int n) {
-        int max = getMax(arr, n);
-        for (int exp = 1; max / exp > 0; exp *= 10) {
-            countSort(arr, n, exp);
+What if the elements are in the range from 1 to n2? 
+We can’t use counting sort because counting sort will take O(n2) which is worse than comparison-based sorting algorithms. Can we sort such an array in linear time? 
+
+Radix Sort is the answer. The idea of Radix Sort is to do digit by digit sort starting from least significant digit to most significant digit. Radix sort uses counting sort as a subroutine to sort.
+
+```cpp
+void radixSort(vector<int> &arr)
+{
+    int d = log10(*max_element(arr.begin(), arr.end())) + 1;
+    vector<int> bucket[10];
+    /* Move from LSB to MSB (digit), get that dig from each
+    element in arr and put it on buckets of 0-9.
+    In the end iterate over buckets and preserve that order */ 
+    for (int i = 0, pos = 10; i < d; ++i, pos *= 10)
+    {
+        for (auto &x : bucket) x.clear();
+        for (auto &x : arr)
+        {
+            int val = ((x % pos) / (pos/10));
+            bucket[val].push_back(x);
         }
+        arr.clear();
+        for (auto &x : bucket)
+            for (auto &y : x) arr.push_back(y);
     }
+}
 
-    static int getMax(int[] arr, int n) {
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < n; i++) {
-            max = Math.max(max, arr[i]);
+// optimized space usage implementation
+void radixSort(vector<int> &arr)
+{
+    vector<int> bucket(10), aux(arr.size());
+    int d = log10(*max_element(arr.begin(), arr.end())) + 1;
+    for (int i = 0, pos = 10; i < d; ++i, pos *= 10)
+    {
+        fill(bucket.begin(), bucket.end(), 0);
+        for (int i = 0; i < arr.size(); ++i) bucket[(arr[i] % pos) / (pos/10)]++;
+        for (int i = 1; i < 10; ++i) bucket[i] += bucket[i-1];
+        for (int i = arr.size()-1; i >= 0; --i)
+        {
+            int x = (arr[i] % pos) / (pos/10);
+            aux[--bucket[x]] = arr[i];
         }
-        return max;
+        for (int i = 0; i < arr.size(); ++i) arr[i] = aux[i];
     }
-
-    static void countSort(int[] arr, int n, int exp) {
-        int[] output = new int[n];
-        int[] count = new int[10];
-        Arrays.fill(count, 0);
-
-        int i;
-        for (i = 0; i < n; i++) {
-            count[(arr[i] / exp) % 10]++;
-        }
-
-        // update count array such that it will contain the actual position of the
-        // element
-        for (i = 1; i < n; i++) {
-            count[i] += count[i - 1];
-        }
-
-        // build output array starting from last: to maintain the stability of count
-        // array(counting sort property)
-        for (i = n - 1; i >= 0; i--) {
-            output[count[(arr[i] / exp) % 10] - 1] = arr[i];
-            count[(arr[i] / exp) % 10]--;
-        }
-
-        for (i = 0; i < n; i++) {
-            arr[i] = output[i];
-        }
-    }
+}
 ```
 
 ## Partial Sorting
@@ -190,44 +208,36 @@ sort is better */
 // stl uses heap sort internally
 ```
 
-## Kth Smallest/Largest Number
+### Kth Smallest/Largest Number
 
-> **Method 4 (QuickSelect)**
-> This is an optimization over method 1 if [QuickSort ](http://geeksquiz.com/quick-sort/)is used as a sorting algorithm in first step. In QuickSort, we pick a pivot element, then move the pivot element to its correct position and partition the array around it. The idea is, not to do complete quicksort, but stop at the point where pivot itself is k’th smallest element. Also, not to recur for both left and right sides of pivot, but recur for one of them according to the position of pivot. The worst case time complexity of this method is O(n2), but it works in O(n) on average.
->
-> **https://www.geeksforgeeks.org/kth-smallestlargest-element-unsorted-array/**
-
-```java
-    // kth smallest/ largest
-    // Quick sort extension
-    static int kthSmallest(int[] arr, int l, int r, int k) {
-        if (k <= 0 || k > r - l + 1)
-            return Integer.MAX_VALUE;
+```cpp
+// Quick Sort extension
+using namespace std;
+int partition(int arr[], int l, int r)
+{
+    int pivot = arr[r];
+    int j = l - 1;
+    for (int i = l; i <= r - 1; ++i)
+        if (arr[i] <= pivot) swap(arr[++j], arr[i]);
+    swap(arr[++j], arr[r]);
+    return j;
+}
+int k_th_smallest(int arr[], int l, int r, int k)
+{
+    if (k > 0 && k <= r - l + 1)
+    {
         int pos = partition(arr, l, r);
-        if (pos - l == k - 1)
-            return arr[pos];
-        if (pos - l > k - 1)
-            return kthSmallest(arr, l, pos - 1, k);
-        return kthSmallest(arr, pos + 1, r, k - (pos - l + 1));
+        if (pos - l == k - 1) return arr[pos];
+        if (pos - l > k - 1) return k_th_smallest(arr, l, pos - 1, k);
+        return k_th_smallest(arr, pos + 1, r, k - pos + l - 1);
     }
-
-    static int partition(int[] arr, int l, int r) {
-        int pivot = arr[r];
-        int i = l, j = l;
-        while (i <= r) {
-            if (arr[i] <= pivot) {
-                swap(arr, i, j);
-                j++;
-            }
-            i++;
-        }
-        return j - 1;
-    }
+    return INT_MAX;
+}
 ```
 
-## Count Inversions
+### Count Inversions
 
-```java
+```cpp
 // BruteFoce O(N²)
 int invCount(vector<int> &arr)
 {
@@ -242,48 +252,30 @@ int invCount(vector<int> &arr)
 
 /* Merge Sort extension O(nlogn)
 Whenever there's a swap while merging, there will be m-i+1 inversions */
-/*MERGE SORT EXTENSION (nlogn)
- Create a function merge that counts the number of inversions when two halves
- of the array are merged, create two indices i and j, i is the index for first
- half and j is an index of the second half. if a[i] is greater than a[j], then
- there are (mid – i) inversions. because left and right subarrays are sorted,
- so all the remaining elements in left-subarray (a[i+1], a[i+2] … a[mid]) will
- be greater than a[j]. */
-
-    static int mergeSortAndCount(int[] arr, int l, int r) {
-        int count = 0;
-
-        if (l < r) {
-            int mid = (l + r) / 2;
-            count += mergeSortAndCount(arr, l, mid);
-            count += mergeSortAndCount(arr, mid + 1, r);
-            count += mergeAndCount(arr, l, mid, r);
-        }
-
-        return count;
+int merge(vector<int> &arr, int l, int m, int r)
+{
+    vector<int> temp = arr;
+    int i = l, j = m + 1, k = l, inv_count = 0;
+    while (i <= m && j <= r)
+    {
+        if (temp[i] > temp[j]) arr[k++] = temp[j++], inv_count += m - i + 1;
+        else arr[k++] = temp[i++];
     }
-
-    static int mergeAndCount(int[] arr, int l, int m, int r) {
-        int[] temp = Arrays.copyOf(arr, arr.length);
-        
-        int i = l, j = m + 1, k = l, inv_count = 0;
-        while (i <= m && j <= r) {
-            if (temp[i] > temp[j]) {
-                arr[k++] = temp[j++];
-                inv_count += m - i + 1;
-            } else {
-                arr[k++] = temp[i++];
-            }
-        }
-        while (i <= m)
-            arr[k++] = temp[i++];
-
-        while (j <= r)
-            arr[k++] = temp[j++];
-
-        return inv_count;
+    while (i <= m) arr[k++] = temp[i++];
+    while (j <= r) arr[k++] = temp[j++];
+    return inv_count;
+}
+int mergeSort(vector<int> &arr, int l, int r)
+{
+    int inv_count = 0, m = (l + r) / 2;
+    if (l < r)
+    {
+        inv_count += mergeSort(arr, 0, m);
+        inv_count += mergeSort(arr, m + 1, r);
+        inv_count += merge(arr, 0, m, r);
     }
-
+    return inv_count;
+}
 
 /* Using Fenwick tree O(nlogn)
 For an element x inside array we need to find how many elements are smaller
@@ -301,91 +293,151 @@ int invCount(vector<int> &arr)
 }
 ```
 
-## Minimum Number of Swaps required to Sort array
+### Minimum Number of Swaps required to Sort array
 
-`So at each i starting from 0 to N in the given array, where N is the size of the array:`
-
-`1. If i is not in its correct position according to the sorted array, then`
-
-`2. We will fill this position with the correct element from the hashmap we built earlier. We know the correct element which should come here is temp[i], so we look up the index of this element from the hashmap.` 
-
-`3. After swapping the required elements, we update the content of the hashmap accordingly, as temp[i] to the ith position, and arr[i] to where temp[i] was earlier.`
-
-```java
-// MINIMUM SWAPS REQUIRED TO SORT ARRAY
-static int minSwaps(int[] arr) {
-    int n = arr.length;
-
-    HashMap<Integer, Integer> hm = new HashMap<>();
-    for (int i = 0; i < n; i++) {
-        hm.put(arr[i], i);
-    }
-
-    int[] temp = Arrays.copyOf(arr, n);
-    Arrays.sort(temp);
-
-    int swaps = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] != temp[i]) {
-            swaps++;
-            int initial = arr[i];
-            swap(arr, i, hm.get(temp[i]));
-            hm.put(initial, hm.get(temp[i]));
-            hm.put(temp[i], i);
+```cpp
+/* Way #1 - Use selection Sort if there's a swap, count it
+O(N^2) however it can be optimized through heap giving
+O(NlogN) */
+int solve(int &n, vector<int> &arr)
+{
+    int count = 0;
+    priority_queue< pair<int, int>, vector< pair<int, int> >, greater< pair<int, int> > > pq;
+    for (int i = 1; i < n; ++i) pq.push({arr[i], i});
+    for (int i = 0; i < n-1; ++i)
+    {
+        int idx = pq.top().second;
+        pq.pop();
+        if (arr[idx] != arr[i])
+        {
+            int temp = arr[idx];
+            arr[idx] = arr[i];
+            arr[i] = temp;
+            count++;
         }
     }
-
-    // System.out.println(swaps);
-    return swaps;
+    return count;
 }
+/* But the code only works for distinct elements
+ 5 1 2 2 2 2 2 => should give 2 but gives 6
+ We can do one thing instead of having idx to the leftmost
+ we should get the rightmost one */
+int solve(int &n, vector<int> &arr)
+{
+    int count = 0;
+    unordered_map<int, int> keyToIndex;
+    for (int i = 0; i < n; ++i) keyToIndex[arr[i]] = i;
+    priority_queue<int, vector<int>, greater<int> > pq;
+    for (int i : arr) pq.push(i);
+    for (int i = 0; i < n-1; ++i)
+    {
+        int smallest = pq.top();
+        pq.pop();
+        if (smallest != arr[i])
+        {
+            int temp1 = arr[i];
+            arr[i] = arr[keyToIndex[smallest]];
+            arr[keyToIndex[smallest]] = temp1;
 
+            int temp2 = keyToIndex[smallest];
+            keyToIndex[smallest] = keyToIndex[temp1];
+            keyToIndex[temp1] = temp2;
+            count++;
+        }
+    }
+    return count;
+}
+/*
+The idea is that if a occupies b's position, b occupies c's
+position and so on, then there will be some integer x which
+will occupy a's position. So, this forms a cycle.
+So, if any element arr[i] is not at its correct position, we
+shift it to its correct position j, then shift arr[j] to its
+correct position k and so on. So, if len is the length of the
+cycle (number of elements in the cycle), then it will require
+a minimum of len-1 swaps to rearrange the elements of the cycle
+to their correct positions.
+We find all such cycles and compute our answer.
+*/
+int DFS(vector<int> adj[], vector<bool> &visited, int cur)
+{
+    visited[cur] = true;
+    int val = 1;
+    for (auto x : adj[cur])
+    {
+        if (!visited[x])
+            val += DFS(adj, visited, x);
+    }
+    return val;
+}
+int solve(int &n, vector<int> &arr)
+{
+    vector<int> adj[n];
+    vector<bool> visited(n, false);
+    for (int i = 0; i < n; ++i) adj[i].push_back(arr[i] - 1), adj[arr[i]-1].push_back(i);
+    int count = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        if (!visited[i])
+            count += DFS(adj, visited, i) - 1;
+    }
+    return count;
+}
 ```
 
-## [Merge Intervals](https://leetcode.com/problems/merge-intervals)
+### [Merge Intervals](https://leetcode.com/problems/merge-intervals)
 
-```java
+```cpp
 class Solution {
-    public int[][] merge(int[][] intervals) {
-        int n = intervals.length;
-        if(n == 1) return intervals;
-        
-        Arrays.sort(intervals, new Comparator<int[]>(){
-            public int compare(int[] a, int[] b){
-                return a[0]-b[0];
-            }
-        });    
-        
-        ArrayList<int[]> al = new ArrayList<>();
-        int s = intervals[0][0];
-        int e = intervals[0][1];
-        int i = 1;
-        while(i < n){
-            int[] a = intervals[i];
-            if(e < a[0]){
-                al.add(new int[]{s, e});
-                s = a[0];
-                e = a[1];
-            }else if(e >= a[0] && e < a[1]){
-                e = a[1];
-            }  
-            i++;
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals)
+    {
+        vector<vector<int>> res;
+        if (intervals.size() == 0)
+            return res;
+        sort(intervals.begin(), intervals.end(), [](auto &x, auto &y)
+        {
+            return (x[0] == y[0]) ? (x[1] < y[1]) : (x[0] < y[0]);
+        });
+        res.push_back(intervals[0]);
+        for (int i = 1; i < intervals.size(); ++i)
+        {
+            if (intervals[i][0] <= res.back()[1])
+                res[res.size()-1][1] = max(res[res.size()-1][1], intervals[i][1]);
+            else
+                res.push_back(intervals[i]);
         }
-        al.add(new int[]{s, e});
-    
-        int[][] arr = new int[al.size()][2];
-        
-        for(int j=0; j<arr.length; j++){
-            int[] b = al.get(j);
-            arr[j][0] = b[0];
-            arr[j][1] = b[1];
-        }
-        
-        return arr;
+        return res;
     }
-}
+};
+
+// O(1) space solution, N^2 time
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals)
+    {
+        if (intervals.size() == 0) return intervals;
+        sort(intervals.begin(), intervals.end(), [](auto &x, auto &y)
+        {
+            return (x[0] == y[0]) ? (x[1] < y[1]) : (x[0] < y[0]);
+        });
+
+        vector<vector<int>>::iterator back = intervals.begin();
+        for (auto it = ++intervals.begin(); it != intervals.end();)
+        {
+            if ((*it)[0] <= (*back)[1])
+            {
+                (*back)[1] = max((*back)[1], (*it)[1]);
+                intervals.erase(it);    // this increases complexity
+            }
+            else back = it++;
+        }
+        return intervals;
+    }
+};
 ```
 
-## [Insert Interval In a Sorted List](https://leetcode.com/problems/insert-interval/)
+### [Insert Interval In a Sorted List](https://leetcode.com/problems/insert-interval/)
 
 In 2 pass found start and end bound. Start is max index with intervals\[start\]\[1\] &lt;= newInterval\[0\] and end is min index with intervals\[end\]\[0\] &lt;= newInterval\[1\]
 
@@ -423,7 +475,7 @@ public:
 };
 ```
 
-## [Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/)
+### [Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/)
 
 ```cpp
 vector<vector<int>> intervalIntersection(vector<vector<int>>& A, vector<vector<int>>& B)
@@ -449,7 +501,7 @@ vector<vector<int>> intervalIntersection(vector<vector<int>>& A, vector<vector<i
 }
 ```
 
-## [Hotel Booking Problem](https://www.interviewbit.com/problems/hotel-bookings-possible/)
+### [Hotel Booking Problem](https://www.interviewbit.com/problems/hotel-bookings-possible/)
 
 ```cpp
 /* Consider it like a timeline +1 means arrival -1 means departure then sort it
@@ -474,7 +526,7 @@ bool Solution::hotel(vector<int> &arrive, vector<int> &depart, int K)
 }
 ```
 
-## [Largest Number](https://www.interviewbit.com/problems/largest-number/)
+### [Largest Number](https://www.interviewbit.com/problems/largest-number/)
 
 ```cpp
 string Solution::largestNumber(const vector<int> &A)
@@ -497,7 +549,7 @@ string Solution::largestNumber(const vector<int> &A)
 }
 ```
 
-## [Max Distance](https://www.interviewbit.com/problems/max-distance/)
+### [Max Distance](https://www.interviewbit.com/problems/max-distance/)
 
 ```cpp
 int Solution::maximumGap(const vector<int> &A)
@@ -517,7 +569,7 @@ int Solution::maximumGap(const vector<int> &A)
 }
 ```
 
-## Missing Integer in an array
+### Missing Integer in an array
 
 ```cpp
 /* If the array contains all numbers from 1 to N except one of them is missing
@@ -540,7 +592,7 @@ for (int i = 0; i < A.size(); i++)
 return A.size()+1;
 ```
 
-## [Missing Ranges](https://www.lintcode.com/problem/missing-ranges/description)
+### [Missing Ranges](https://www.lintcode.com/problem/missing-ranges/description)
 ```c++
 vector<string> findMissingRanges(vector<int> &nums, int lower, int upper)
 {
@@ -564,7 +616,7 @@ vector<string> findMissingRanges(vector<int> &nums, int lower, int upper)
 }
 ```
 
-## Maximum Consecutive Gap
+### Maximum Consecutive Gap
 
 ```cpp
 /* Basically if we could have sort then it's simple how about counting sort?
@@ -605,7 +657,7 @@ int Solution::maximumGap(const vector<int> &A)
 }
 ```
 
-## Min/Max XOR Pair
+### Min/Max XOR Pair
 
 ```cpp
 /* If we sort and then check xor of consecutive pair it will give min
@@ -621,7 +673,7 @@ int Solution::findMinXor(vector<int> &A)
 // Only work for min XOR
 ```
 
-## `Can be solved using trie along with Max XOR Pair problem`
+Can be solved using trie along with Max XOR Pair problem
 
 ```cpp
 /* No need to check for isTerminal since we have same length
@@ -673,7 +725,7 @@ int findMaximumXOR(vector<int>& nums)
 }
 ```
 
-## [The Skyline Problem](https://leetcode.com/problems/the-skyline-problem/)
+### [The Skyline Problem](https://leetcode.com/problems/the-skyline-problem/)
 
 ![\[ \[2 9 10\], \[3 7 15\], \[5 12 12\], \[15 20 10\], \[19 24 8\] \] -&amp;gt; \[ \[2 10\], \[3 15\]...](.gitbook/assets/image%20%28264%29.png)
 
